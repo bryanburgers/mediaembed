@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<providers xmlns="tag:burgers.io,2014:mediaembed/providers">
+	<provider code="instagram" name="Instagram">
+		<endpoints>
+			<endpoint href="https://api.instagram.com/oembed" type="application/json+oembed"/>
+		</endpoints>
+		<schemes>
+			<scheme pattern="http://instagram.com/p/*" />
+			<scheme pattern="http://instagr.am/p/*" />
+			<scheme pattern="https://instagram.com/p/*" />
+			<scheme pattern="https://instagr.am/p/*" />
+		</schemes>
+	</provider>
+	<provider code="twitter" name="Twitter">
+		<endpoints>
+			<endpoint href="https://api.twitter.com/1/statuses/oembed.json" type="application/json+oembed" />
+		</endpoints>
+		<schemes>
+			<scheme pattern="http://twitter.com/*" />
+			<scheme pattern="https://twitter.com/*" />
+		</schemes>
+	</provider>
+</providers>

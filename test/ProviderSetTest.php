@@ -59,4 +59,25 @@ class ProviderSetTest extends PHPUnit_Framework_TestCase
 
 		$this->assertNull($providerSet->find('https://burgers.io/'));
 	}
+
+	public function testParse()
+	{
+		$file = __DIR__ . '/providers.xml';
+
+		$providerSet = ProviderSet::load($file);
+
+		$instagram = $providerSet->getProvider('instagram');
+		$twitter = $providerSet->getProvider('twitter');
+
+		$this->assertNotNull($instagram);
+		$this->assertNotNull($twitter);
+
+		$this->assertEquals($instagram->code, 'instagram');
+		$this->assertEquals($instagram->name, 'Instagram');
+		$this->assertEquals(count($instagram->endpoints), 1);
+		$this->assertEquals(count($instagram->schemes), 4);
+		$this->assertEquals($instagram->endpoints[0]->type, 'application/json+oembed');
+		$this->assertEquals($instagram->endpoints[0]->href, 'https://api.instagram.com/oembed');
+		$this->assertEquals($instagram->schemes[0]->pattern, 'http://instagram.com/p/*');
+	}
 }

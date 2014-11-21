@@ -2,6 +2,10 @@
 
 namespace MediaEmbed\Provider;
 
+use MediaEmbed\Provider\Endpoint;
+use MediaEmbed\Provider\Provider;
+use MediaEmbed\Provider\Scheme;
+
 class ProviderSet
 {
 	private $_providers;
@@ -65,5 +69,64 @@ class ProviderSet
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Load a providers.xml file
+	 *
+	 * @param $file string The file path
+	 *
+	 * @return ProviderSet The parsed providers.
+	 */
+	public static function load($filename)
+	{
+		$contents = file_get_contents($filename);
+
+		$providersEl = new \SimpleXMLElement($contents);
+
+		$providers = array();
+
+		foreach ($providersEl->provider as $providerEl)
+		{
+			$providers[] = ProviderSet::loadProvider($providerEl);
+		}
+
+		return new ProviderSet($providers);
+	}
+
+	protected static function loadProvider($providerEl)
+	{
+		$code = (string)$providerEl['code'];
+		$name = (string)$providerEl['name'];
+
+		$endpoints = array();
+		$schemes = array();
+
+		foreach ($providerEl->endpoints->endpoint as $endpointEl)
+		{
+			$endpoints[] = ProviderSet::loadEndpoint($endpointEl);
+		}
+
+		foreach ($providerEl->schemes->scheme as $schemeEl)
+		{
+			$schemes[] = ProviderSet::loadScheme($schemeEl);
+		}
+
+		return new Provider($code, $name, $endpoints, $schemes);
+	}
+
+	protected static function loadEndpoint($endpointEl)
+	{
+		$href = (string)$endpointEl['href'];
+		$type = (string)$endpointEl['type'];
+
+		return new Endpoint($href, $type);
+	}
+
+	protected static function loadScheme($schemeEl)
+	{
+		$pattern = (string)$schemeEl['pattern'];
+
+		return new Scheme($pattern);
 	}
 }

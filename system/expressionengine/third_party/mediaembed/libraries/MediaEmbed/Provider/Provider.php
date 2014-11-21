@@ -9,16 +9,16 @@ class Provider
 {
 	public $code;
 	public $name;
-	private $_endpoints;
-	private $_schemes;
+	public $endpoints;
+	public $schemes;
 	public $userAgent = 'MediaElement/1.0';
 
 	function __construct($code, $name, $endpoints, $schemes)
 	{
 		$this->code = $code;
 		$this->name = $name;
-		$this->_endpoints = $endpoints;
-		$this->_schemes = $schemes;
+		$this->endpoints = $endpoints;
+		$this->schemes = $schemes;
 	}
 
 	public function fetch($url, $parameters = null)
@@ -28,11 +28,11 @@ class Provider
 		}
 
 		// Why are there multiple endpoints? Always use the first one.
-		if (count($this->_endpoints) < 1) {
+		if (count($this->endpoints) < 1) {
 			throw new Exception("Provider '{$this->code}' has no endpoints.");
 		}
 
-		$endpoint = $this->_endpoints[0];
+		$endpoint = $this->endpoints[0];
 
 		$data = null;
 
@@ -129,7 +129,7 @@ class Provider
 	{
 		$result = false;
 
-		foreach ($this->_schemes as $scheme)
+		foreach ($this->schemes as $scheme)
 		{
 			if ($scheme->test($url))
 			{
