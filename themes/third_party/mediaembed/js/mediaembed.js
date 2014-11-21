@@ -67,9 +67,6 @@ jQuery(function($) {
 			var val = input.val();
 			updateStatus(oembedUrl, status, val);
 		});
-
-		var val = input.val();
-		updateStatus(oembedUrl, status, val);
 	}
 
 	$('.mediaembed').each(function() {

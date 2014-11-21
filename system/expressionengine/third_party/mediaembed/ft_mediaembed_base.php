@@ -128,13 +128,21 @@ class Mediaembed_Base extends EE_Fieldtype {
 
 		$oembedUrl = BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=mediaembed'.AMP.'method=oembed'.AMP.'provider='.$this->_code;
 
+		$html = htmlspecialchars($obj->html);
+		$output = '';
+		if ($obj->html != '')
+		{
+			$output = '<div class="status success">' . $obj->html . '</div>';
+		}
+
 		$this->_include_theme_js('js/mediaembed.js');
 		$this->_include_theme_css('css/mediaembed.css');
 		return <<<EOF
 <div class="mediaembed" data-oembed-url="{$oembedUrl}">
 	<input type="url" name="{$name}[url]" value="{$obj->url}">
 	<input data-provider type="hidden" name="{$name}[provider] value="{$obj->provider}">
-	<input data-html type="hidden" name="{$name}[html]" value="{$obj->html}">
+	<input data-html type="hidden" name="{$name}[html]" value="{$html}">
+	{$output}
 </div>
 EOF;
 	}
