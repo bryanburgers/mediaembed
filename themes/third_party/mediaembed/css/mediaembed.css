@@ -1,0 +1,36 @@
+/**
+ * EE fieldtypes need to add their own 11px top margin to the controls. But
+ * this is only needed when the field type is being used as a top level field,
+ * not as a grid field.
+ */
+.publish_field fieldset.holder > .mediaembed {
+	margin-top: 11px;
+}
+
+.mediaembed .status {
+	padding: 5px 0;
+}
+.mediaembed .status:before {
+	content: "";
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-right: 5px;
+	background: transparent none no-repeat center center;
+	vertical-align: middle;
+}
+.mediaembed .status.loading:before {
+	background-image: url(../images/loading.gif);
+}
+.mediaembed .status.noservice {
+
+}
+.mediaembed .status.success:before {
+	background-image: url(../images/success.png);
+}
+.mediaembed .status.error {
+	color: red;
+}
+.mediaembed .status.error:before {
+	background-image: url(../images/error.png);
+}
