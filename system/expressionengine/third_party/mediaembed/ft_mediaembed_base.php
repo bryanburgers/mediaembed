@@ -34,6 +34,20 @@ class Mediaembed_Base extends EE_Fieldtype {
 		return $this->cache['providerset'];
 	}
 
+	function isModuleInstalled() {
+		if (!isset($this->cache['module_installed']))
+		{
+			$results = $this->EE->db->select('*')
+				->from('modules')
+				->where('module_name', MEDIAEMBED_SHORTNAME)
+				->get();
+
+			$installed = $results->num_rows() > 0;
+			$this->cache['module_installed'] = $installed;
+		}
+		return $this->cache['module_installed'];
+	}
+
 	function _extract_data($data) {
 		// Matrix gives us back $data as an array.
 		if (is_array($data)) {
@@ -120,7 +134,14 @@ class Mediaembed_Base extends EE_Fieldtype {
 	 */
 	function display_field($data)
 	{
-		return $this->_display($data, $this->field_name);
+		if ($this->isModuleInstalled())
+		{
+			return $this->_display($data, $this->field_name);
+		}
+		else
+		{
+			return '<p>The MediaEmbed module must be installed to use this Fieldtype</p>';
+		}
 	}
 
 	function _display($data, $name) {
