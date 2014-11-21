@@ -1,0 +1,16 @@
+{
+	"name": "burgers.io/mediaembed",
+	"description": "OEmbed field types for ExpressionEngine",
+	"authors": [
+		{
+			"name": "Bryan Burgers",
+			"email": "bryan@burgers.io"
+		}
+	],
+	"require": {
+
+	},
+	"require-dev": {
+		"phpunit/phpunit": "4.1.*"
+	}
+}
