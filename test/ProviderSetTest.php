@@ -80,4 +80,19 @@ class ProviderSetTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($instagram->endpoints[0]->href, 'https://api.instagram.com/oembed');
 		$this->assertEquals($instagram->schemes[0]->pattern, 'http://instagram.com/p/*');
 	}
+
+	public function testGetAll()
+	{
+		$file = __DIR__ . '/providers.xml';
+
+		$providerSet = ProviderSet::load($file);
+
+		$providers = $providerSet->getAll();
+
+		$this->assertNotNull($providers);
+		$this->assertEquals(count($providers), 2);
+
+		$this->assertEquals($providers[0]->code, 'instagram');
+		$this->assertEquals($providers[1]->code, 'twitter');
+	}
 }

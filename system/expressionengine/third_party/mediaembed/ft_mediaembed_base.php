@@ -25,6 +25,15 @@ class Mediaembed_Base extends EE_Fieldtype {
 		}
 	}
 
+	function getProviderSet() {
+		if (!isset($this->cache['providerset']))
+		{
+			$providerSet = ProviderSet::load(PATH_THIRD.'mediaembed/providers.xml');
+			$this->cache['providerset'] = $providerSet;
+		}
+		return $this->cache['providerset'];
+	}
+
 	function _extract_data($data) {
 		// Matrix gives us back $data as an array.
 		if (is_array($data)) {
@@ -64,6 +73,16 @@ class Mediaembed_Base extends EE_Fieldtype {
 		if (! in_array($file, $this->cache['includes']))
 		{
 			$this->cache['includes'][] = $file;
+
+			$providerSet = $this->getProviderSet();
+			$providers = $providerSet->getAll();
+			$fieldtypes = array();
+			foreach ($providers as $provider)
+			{
+				$fieldtypes[] = 'mediaembed_'.$provider->code;
+			}
+
+			$this->EE->cp->add_to_foot('<script type="text/javascript">var MediaEmbedFieldtypes = ' . json_encode($fieldtypes) . ";</script>");
 			$this->EE->cp->add_to_foot('<script type="text/javascript" src="'.$this->_theme_url().$file.'?version='.$this->info['version'].'"></script>');
 		}
 	}

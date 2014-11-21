@@ -72,6 +72,14 @@ class ProviderSet
 	}
 
 	/**
+	 * Get all of the loaded providers as an array.
+	 */
+	public function getAll()
+	{
+		return $this->_providers;
+	}
+
+	/**
 	 * Load a providers.xml file
 	 *
 	 * @param $file string The file path

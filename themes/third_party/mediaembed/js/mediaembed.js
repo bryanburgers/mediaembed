@@ -57,7 +57,6 @@ jQuery(function($) {
 		mediaembed.data('mediaembed-isinitialized', true);
 
 		var oembedUrl = mediaembed.attr('data-oembed-url');
-		console.log(oembedUrl);
 
 		var input = mediaembed.find('input');
 		var status = mediaembed.find('.status');
@@ -78,13 +77,19 @@ jQuery(function($) {
 	});
 
 	if (typeof(window.Grid) !== 'undefined') {
-		Grid.bind('mediaembed', 'display', function(cell) {
-			// When Matrix addes a new mediaembed, initialize it.
+		for (var i = 0; i < MediaEmbedFieldtypes.length; i++) {
+			var fieldtype = MediaEmbedFieldtypes[i];
+			Grid.bind(fieldtype, 'display', onDisplay);
+			Grid.bind(fieldtype, 'remove', onRemove);
+		}
+
+		function onDisplay(cell) {
+			// When Grid addes a new mediaembed, initialize it.
 			var mediaembed = $(cell).find('.mediaembed');
 			initializeElement(mediaembed);
-		});
+		}
 
-		Grid.bind('mediaembed', 'remove', function(cell) {
+		function onRemove(cell) {
 			// Because mediaembed inputs have a type of 'url', if a person
 			// removes a mediaembed from Grid that does not have a valid value,
 			// the browser will refuse to submit it (because it isn't a valid
@@ -93,6 +98,6 @@ jQuery(function($) {
 			// doesn't do that.
 			var mediaembed = $(cell).find('.mediaembed');
 			mediaembed.find('input').val('');
-		});
+		}
 	}
 });
