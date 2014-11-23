@@ -41,7 +41,10 @@ class Mediaembed_mcp
 			return $this->outputJsonError($e->getMessage());
 		}
 
-		return $this->EE->output->send_ajax_response(array('data' => $data->data));
+		$data->data->{'mediaembed:url'} = $url;
+		$data->data->{'mediaembed:provider_code'} = $provider->code;
+
+		return $this->EE->output->send_ajax_response((array)$data->data);
 	}
 
 	private function outputJsonError($message)

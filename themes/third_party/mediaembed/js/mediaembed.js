@@ -5,8 +5,8 @@ jQuery(function($) {
 			dataType: 'json',
 			url: oembedUrl + '&url=' + url,
 			success: function(data) {
-				if (data.data) {
-					callback(null, data.data);
+				if (data['mediaembed:provider_code']) {
+					callback(null, data);
 				}
 				else {
 					callback('Failed to get data');
@@ -32,19 +32,16 @@ jQuery(function($) {
 				status.removeClass('loading').removeClass('noservice').addClass('error').removeClass('success');
 				status.text('Error getting data. Are you sure this is a valid URL?');
 
-				status.closest('.mediaembed').find('[data-provider]').val('');
-				status.closest('.mediaembed').find('[data-html]').val('');
+				status.closest('.mediaembed').find('[js-data]').val('');
 			}
 			else {
-				var provider = data.provider;
 				var html = data.html;
 
 				status.removeClass('loading').removeClass('noservice').removeClass('error').addClass('success');
 				status.empty();
 				status.append($(html));
 
-				status.closest('.mediaembed').find('[data-provider]').val(provider);
-				status.closest('.mediaembed').find('[data-html]').val(html);
+				status.closest('.mediaembed').find('[js-data]').val(JSON.stringify(data));
 			}
 		});
 	}

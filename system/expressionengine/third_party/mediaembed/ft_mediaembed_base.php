@@ -49,21 +49,19 @@ class Mediaembed_Base extends EE_Fieldtype {
 	}
 
 	function _extract_data($data) {
-		// Matrix gives us back $data as an array.
-		if (is_array($data)) {
+		if (is_array($data))
+		{
 			$embed = new stdClass();
 			$embed->url = isset($data['url']) ? $data['url'] : '';
-			$embed->provider = isset($data['provider']) ? $data['provider'] : '';
-			$embed->html = isset($data['html']) ? $data['html'] : '';
+			$embed->data = isset($data['data']) ? $data['data'] : '';
 			return $embed;
 		}
 
-		$datas = explode('|', $data, 3);
+		$datas = explode('|', $data, 2);
 
 		$embed = new stdClass();
 		$embed->url = $datas[0];
-		$embed->provider = isset($datas[1]) ? $datas[1] : '';
-		$embed->html = isset($datas[2]) ? $datas[2] : '';
+		$embed->data = isset($datas[1]) ? $datas[1] : '';
 		return $embed;
 	}
 
@@ -137,7 +135,7 @@ class Mediaembed_Base extends EE_Fieldtype {
 		if ($this->isModuleInstalled())
 		{
 			$obj = $this->_extract_data($data);
-			$obj->html = htmlspecialchars_decode($obj->html);
+			$obj->data = htmlspecialchars_decode($obj->data);
 			return $this->_display($obj, $this->field_name);
 		}
 		else
@@ -159,23 +157,30 @@ class Mediaembed_Base extends EE_Fieldtype {
 		}
 	}
 
-	function _display($obj, $name) {
+	function _display($embed, $name) {
 		$oembedUrl = BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=mediaembed'.AMP.'method=oembed'.AMP.'provider='.$this->_code;
 
-		$html = htmlspecialchars($obj->html);
-		$output = '';
-		if ($obj->html != '')
+		$data = htmlspecialchars($embed->data);
+		try
 		{
-			$output = '<div class="status success">' . $obj->html . '</div>';
+			$dataJson = json_decode($embed->data);
+		}
+		catch (Exception $e)
+		{
+			$dataJson = null;
+		}
+		$output = '';
+		if (!is_null($dataJson) && isset($dataJson->html) && $dataJson->html != '')
+		{
+			$output = '<div class="status success">' . $dataJson->html . '</div>';
 		}
 
 		$this->_include_theme_js('js/mediaembed.js');
 		$this->_include_theme_css('css/mediaembed.css');
 		return <<<EOF
 <div class="mediaembed" data-oembed-url="{$oembedUrl}">
-	<input type="url" name="{$name}[url]" value="{$obj->url}">
-	<input data-provider type="hidden" name="{$name}[provider] value="{$obj->provider}">
-	<input data-html type="hidden" name="{$name}[html]" value="{$html}">
+	<input type="url" name="{$name}[url]" value="{$embed->url}">
+	<input js-data type="hidden" name="{$name}[data]" value="{$data}">
 	{$output}
 </div>
 EOF;
@@ -191,10 +196,9 @@ EOF;
 	function save($data)
 	{
 		$url = $data['url'];
-		$provider = $this->_code;
-		$html = $data['html'];
+		$data = $data['data'];
 
-		return $url . '|' . $provider . '|' . $html;
+		return $url . '|' . $data;
 	}
 
 	/**
@@ -210,6 +214,14 @@ EOF;
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
 		$embed = $this->_extract_data($data);
-		return $embed->html;
+		try
+		{
+			$dataJson = json_decode($embed->data);
+		}
+		catch (Exception $e)
+		{
+			$dataJson = null;
+		}
+		return is_null($dataJson) ? '' : $dataJson->html;
 	}
 }
