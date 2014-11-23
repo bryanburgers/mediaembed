@@ -136,7 +136,9 @@ class Mediaembed_Base extends EE_Fieldtype {
 	{
 		if ($this->isModuleInstalled())
 		{
-			return $this->_display($data, $this->field_name);
+			$obj = $this->_extract_data($data);
+			$obj->html = htmlspecialchars_decode($obj->html);
+			return $this->_display($obj, $this->field_name);
 		}
 		else
 		{
@@ -144,9 +146,20 @@ class Mediaembed_Base extends EE_Fieldtype {
 		}
 	}
 
-	function _display($data, $name) {
-		$obj = $this->_extract_data($data);
+	function grid_display_field($data)
+	{
+		if ($this->isModuleInstalled())
+		{
+			$obj = $this->_extract_data($data);
+			return $this->_display($obj, $this->field_name);
+		}
+		else
+		{
+			return '<p>The MediaEmbed module must be installed to use this Fieldtype</p>';
+		}
+	}
 
+	function _display($obj, $name) {
 		$oembedUrl = BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=mediaembed'.AMP.'method=oembed'.AMP.'provider='.$this->_code;
 
 		$html = htmlspecialchars($obj->html);
