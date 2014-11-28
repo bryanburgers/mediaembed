@@ -36,22 +36,22 @@ class Provider
 
 		$data = null;
 
-		$url = $this->buildFetchUrl($endpoint, $url, $parameters);
+		$oembedUrl = $this->buildFetchUrl($endpoint, $url, $parameters);
 
 		switch ($endpoint->type) {
 			case 'application/json+oembed';
-				$data = $this->fetchJSON($url);
+				$data = $this->fetchJSON($oembedUrl);
 				break;
 /*
 			case 'text/xml+oembed';
-				$data = $this->fetchXML($endpoint, $url, $parameters);
+				$data = $this->fetchXML($oembedUrl);
 				break;
 */
 			default:
 				throw new Exception("Provider '{$this->code}', first endpoint has an invalid type '{$endpoint->type}'.");
 		}
 
-		return new Result($this, $data);
+		return new Result($url, $this->code, $data);
 	}
 
 	private function buildFetchUrl($endpoint, $url, $parameters)

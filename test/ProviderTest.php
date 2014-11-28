@@ -56,17 +56,18 @@ class ProviderTest extends PHPUnit_Framework_TestCase
 
 		$provider = new Provider('twitter', 'Twitter', array($endpoint), array($httpTwitter, $httpsTwitter));
 
-		$result = $provider->fetch('https://twitter.com/bryanburgers/status/532242786162995200');
+		$url = 'https://twitter.com/bryanburgers/status/532242786162995200';
+
+		$result = $provider->fetch($url);
 
 		$this->assertNotNull($result);
 
-		$this->assertObjectHasAttribute('provider', $result);
-		$this->assertEquals($result->provider, $provider);
+		$this->assertEquals($result->getProviderCode(), $provider->code);
 
-		$this->assertObjectHasAttribute('data', $result);
-		$this->assertObjectHasAttribute('html', $result->data);
-		$this->assertEquals($result->data->type, 'rich');
-		$this->assertEquals($result->data->author_url, 'https://twitter.com/bryanburgers');
+		$this->assertEquals($result->getOriginalUrl(), $url);
+		$this->assertObjectHasAttribute('html', $result);
+		$this->assertEquals($result->type, 'rich');
+		$this->assertEquals($result->author_url, 'https://twitter.com/bryanburgers');
 	}
 
 	public function testFetchWithUrlParameter()
@@ -81,13 +82,11 @@ class ProviderTest extends PHPUnit_Framework_TestCase
 
 		$this->assertNotNull($result);
 
-		$this->assertObjectHasAttribute('provider', $result);
-		$this->assertEquals($result->provider, $provider);
+		$this->assertEquals($result->getProviderCode(), $provider->code);
 
-		$this->assertObjectHasAttribute('data', $result);
-		$this->assertObjectHasAttribute('html', $result->data);
-		$this->assertEquals($result->data->type, 'rich');
-		$this->assertEquals($result->data->author_url, 'https://twitter.com/bryanburgers');
+		$this->assertObjectHasAttribute('html', $result);
+		$this->assertEquals($result->type, 'rich');
+		$this->assertEquals($result->author_url, 'https://twitter.com/bryanburgers');
 	}
 
 	public function testFetchWithParameters()
@@ -104,13 +103,11 @@ class ProviderTest extends PHPUnit_Framework_TestCase
 
 		$this->assertNotNull($result);
 
-		$this->assertObjectHasAttribute('provider', $result);
-		$this->assertEquals($result->provider, $provider);
+		$this->assertEquals($result->getProviderCode(), $provider->code);
 
-		$this->assertObjectHasAttribute('data', $result);
-		$this->assertObjectHasAttribute('html', $result->data);
-		$this->assertEquals($result->data->type, 'rich');
-		$this->assertEquals($result->data->author_url, 'https://twitter.com/bryanburgers');
+		$this->assertObjectHasAttribute('html', $result);
+		$this->assertEquals($result->type, 'rich');
+		$this->assertEquals($result->author_url, 'https://twitter.com/bryanburgers');
 	}
 
 	/**
@@ -131,9 +128,8 @@ class ProviderTest extends PHPUnit_Framework_TestCase
 		$this->assertObjectHasAttribute('provider', $result);
 		$this->assertEquals($result->provider, $provider);
 
-		$this->assertObjectHasAttribute('data', $result);
-		$this->assertObjectHasAttribute('html', $result->data);
-		$this->assertEquals($result->data->type, 'rich');
-		$this->assertEquals($result->data->author_url, 'https://twitter.com/bryanburgers');
+		$this->assertObjectHasAttribute('html', $result);
+		$this->assertEquals($result->type, 'rich');
+		$this->assertEquals($result->author_url, 'https://twitter.com/bryanburgers');
 	}
 }
