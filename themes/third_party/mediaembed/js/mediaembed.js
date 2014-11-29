@@ -24,6 +24,7 @@ jQuery(function($) {
 		if (!val || val.match(/^\s*$/)) {
 			status.removeClass('loading').addClass('noservice').removeClass('error').removeClass('success');
 			status.text('');
+			status.closest('.mediaembed').find('[js-data]').val('');
 			return;
 		}
 

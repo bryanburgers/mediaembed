@@ -4,6 +4,7 @@ require_once PATH_THIRD.'mediaembed/config.php';
 require_once __DIR__ . '/libraries/autoload.php';
 
 use MediaEmbed\Provider\ProviderSet;
+use MediaEmbed\Provider\Result;
 
 class Mediaembed_Base extends EE_Fieldtype {
 	private $_code;
@@ -51,18 +52,32 @@ class Mediaembed_Base extends EE_Fieldtype {
 	function _extract_data($data) {
 		if (is_array($data))
 		{
-			$embed = new stdClass();
-			$embed->url = isset($data['url']) ? $data['url'] : '';
-			$embed->data = isset($data['data']) ? $data['data'] : '';
-			return $embed;
+			try {
+				return Result::parseJson($data['data']);
+			}
+			catch (Exception $e) {
+				return null;
+			}
 		}
 
-		$datas = explode('|', $data, 2);
+		// In v1.0.0, data was stored as URL|JSONDATA instead of storing it
+		// just in the JSONDATA. In that case, massage the data to get it just
+		// as JSONDATA.
+		if (preg_match("/^https?:\/\/[^|]*\|{/", $data))
+		{
+			$datas = explode('|', $data, 2);
+			$json = json_decode($datas[1]);
+			$json->{'mediaembed:original_url'} = $datas[0];
+			$data = json_encode($json);
+		}
 
-		$embed = new stdClass();
-		$embed->url = $datas[0];
-		$embed->data = isset($datas[1]) ? $datas[1] : '';
-		return $embed;
+		try {
+			return Result::parseJson($data);
+		}
+		catch (Exception $e)
+		{
+			return null;
+		}
 	}
 
 	/**
@@ -132,96 +147,69 @@ class Mediaembed_Base extends EE_Fieldtype {
 	 */
 	function display_field($data)
 	{
-		if ($this->isModuleInstalled())
+		if (is_string($data))
 		{
-			$obj = $this->_extract_data($data);
-			$obj->data = htmlspecialchars_decode($obj->data);
-			return $this->_display($obj, $this->field_name);
+			$data = htmlspecialchars_decode($data);
 		}
-		else
-		{
-			return '<p>The MediaEmbed module must be installed to use this Fieldtype</p>';
-		}
+		return $this->_display($data, $this->field_name);
 	}
 
 	function grid_display_field($data)
 	{
-		if ($this->isModuleInstalled())
-		{
-			$obj = $this->_extract_data($data);
-			return $this->_display($obj, $this->field_name);
-		}
-		else
+		return $this->_display($data, $this->field_name);
+	}
+
+	function _display($data, $name) {
+		if (!$this->isModuleInstalled())
 		{
 			return '<p>The MediaEmbed module must be installed to use this Fieldtype</p>';
 		}
-	}
 
-	function _display($embed, $name) {
+		$result = $this->_extract_data($data);
+
 		$oembedUrl = BASE.AMP.'C=addons_modules'.AMP.'M=show_module_cp'.AMP.'module=mediaembed'.AMP.'method=oembed'.AMP.'provider='.$this->_code;
 
-		$data = htmlspecialchars($embed->data);
-		try
-		{
-			$dataJson = json_decode($embed->data);
-		}
-		catch (Exception $e)
-		{
-			$dataJson = null;
-		}
+		$data = '';
 		$output = '';
-		if (!is_null($dataJson) && isset($dataJson->html) && $dataJson->html != '')
+		$url = '';
+
+		if (!is_null($result))
 		{
-			$output = '<div class="status success">' . $dataJson->html . '</div>';
+			$url = $result->getOriginalUrl();
+			$data = htmlspecialchars(json_encode($result->toSerializableObject()));
+		}
+
+		if (!is_null($result) && isset($result->html) && $result->html != '')
+		{
+			$output = '<div class="status success">' . $result->html . '</div>';
 		}
 
 		$this->_include_theme_js('js/mediaembed.js');
 		$this->_include_theme_css('css/mediaembed.css');
 		return <<<EOF
 <div class="mediaembed" data-oembed-url="{$oembedUrl}">
-	<input type="url" name="{$name}[url]" value="{$embed->url}">
+	<input type="url" name="{$name}[url]" value="{$url}">
 	<input js-data type="hidden" name="{$name}[data]" value="{$data}">
 	{$output}
 </div>
 EOF;
 	}
 
-	/**
-	 * Prep data for saving
-	 *
-	 * @access	public
-	 * @param	submitted field data
-	 * @return	string to save
-	 */
 	function save($data)
 	{
-		$url = $data['url'];
-		$data = $data['data'];
-
-		return $url . '|' . $data;
+		$obj = json_decode($data['data']);
+		if ($obj) {
+			$obj->{'mediaembed:original_url'} = $data['url'];
+			return json_encode($obj);
+		}
+		else {
+			return '';
+		}
 	}
 
-	/**
-	 * Replace tag
-	 *
-	 * @access	public
-	 * @param	field data
-	 * @param	field parameters
-	 * @param	data between tag pairs
-	 * @return	replacement text
-	 *
-	 */
 	function replace_tag($data, $params = array(), $tagdata = FALSE)
 	{
 		$embed = $this->_extract_data($data);
-		try
-		{
-			$dataJson = json_decode($embed->data);
-		}
-		catch (Exception $e)
-		{
-			$dataJson = null;
-		}
-		return is_null($dataJson) ? '' : $dataJson->html;
+		return is_null($embed) ? '' : $embed->html;
 	}
 }

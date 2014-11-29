@@ -86,4 +86,18 @@ class ResultTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($result->getOriginalUrl(), "https://burgers.io/test");
 		$this->assertEquals($result->getProviderCode(), "burgersio");
 	}
+
+	public function testFailedParseEmpty()
+	{
+		$result = Result::parseJSON('');
+
+		$this->assertNull($result);
+	}
+
+	public function testFailedParse()
+	{
+		$result = Result::parseJSON('not json');
+
+		$this->assertNull($result);
+	}
 }

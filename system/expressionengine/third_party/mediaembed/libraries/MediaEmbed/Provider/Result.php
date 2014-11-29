@@ -52,7 +52,19 @@ class Result
 
 	public static function parseJSON($json)
 	{
-		$obj = json_decode($json);
+		try
+		{
+			$obj = json_decode($json);
+		}
+		catch (Exception $e)
+		{
+			return null;
+		}
+
+		if (is_null($obj))
+		{
+			return null;
+		}
 
 		$url = $obj->{'mediaembed:original_url'};
 		$providerCode = $obj->{'mediaembed:provider_code'};
