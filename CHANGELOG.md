@@ -6,6 +6,13 @@ This project uses a standard [versioning system][semver] and [changelog
 format][changelog].
 
 
+## Upcoming
+
+### Added
+
+* (#4) Tags to access any oembed values returned by the provider.
+
+
 ## 1.0.0 – 2014-11-23
 
 Initial Release

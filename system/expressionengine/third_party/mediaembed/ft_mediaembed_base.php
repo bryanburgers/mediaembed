@@ -212,4 +212,24 @@ EOF;
 		$embed = $this->_extract_data($data);
 		return is_null($embed) ? '' : $embed->html;
 	}
+
+	function replace_tag_catchall($data, $params = array(), $tagdata = FALSE, $modifier)
+	{
+		$embed = $this->_extract_data($data);
+		$obj = null;
+
+		if (!is_null($embed))
+		{
+			$obj = $embed->toSerializableObject();
+		}
+
+		if (!is_null($obj) && $obj->{$modifier})
+		{
+			return $obj->{$modifier};
+		}
+		else
+		{
+			return '';
+		}
+	}
 }
