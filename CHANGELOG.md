@@ -6,7 +6,7 @@ This project uses a standard [versioning system][semver] and [changelog
 format][changelog].
 
 
-## Upcoming
+## 1.1.0 – 2015-07-17
 
 ### Added
 
