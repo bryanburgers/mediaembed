@@ -82,6 +82,7 @@ class Provider
 		curl_setopt($s, CURLOPT_HTTPHEADER, array(
 			"Accept: {$contentType}, */*; 0.2"
 			));
+		curl_setopt($s, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($s, CURLOPT_TIMEOUT, 3);
 		curl_setopt($s, CURLOPT_CONNECTTIMEOUT, 3);
 		curl_setopt($s, CURLOPT_RETURNTRANSFER, true);

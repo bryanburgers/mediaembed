@@ -12,6 +12,10 @@ format][changelog].
 
 * (#4) Tags to access any oembed values returned by the provider.
 
+### Fixed
+
+* (#6) Fix error on the front end with Instagram integration.
+
 
 ## 1.0.0 – 2014-11-23
 
