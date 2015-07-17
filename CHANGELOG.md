@@ -15,6 +15,8 @@ format][changelog].
 ### Fixed
 
 * (#6) Fix error on the front end with Instagram integration.
+* (#7) Fix issue where Tweets show up in Blocks even when the block is
+  collapsed.
 
 
 ## 1.0.0 – 2014-11-23

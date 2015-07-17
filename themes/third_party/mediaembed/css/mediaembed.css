@@ -34,3 +34,7 @@
 .mediaembed .status.error:before {
 	background-image: url(../images/error.png);
 }
+
+[data-blockvisibility="collapsed"] .mediaembed iframe {
+	display: none !important;
+}
